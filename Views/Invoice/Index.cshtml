@@ -1,0 +1,229 @@
+@model List<OfficeSuite.Models.Invoice>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Renewals & Invoices</h2>
+        <div class="d-flex gap-2">
+            <a asp-action="ExportToExcel" class="btn btn-outline-success btn-sm glass d-print-none">
+                <i data-feather="download"></i> Export to Excel
+            </a>
+            <a asp-action="Trash" class="btn btn-outline-danger btn-sm glass d-print-none">
+                <i data-feather="trash-2"></i> Trash Bin
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0">
+        <h6 class="text-primary fw-bold mb-0">Quick Add Renewal</h6>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form asp-action="Create" method="post" class="row g-3">
+             <div class="col-md-3">
+                <label class="form-label text-muted small">Client</label>
+                <div class="input-group">
+                    <select name="clientId" class="form-select" required>
+                        <option value="">Select Client</option>
+                        @if (ViewBag.Clients != null)
+                        {
+                            @foreach (var c in ViewBag.Clients)
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        }
+                    </select>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#addClientModal"><i data-feather="plus"></i></button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                 <label class="form-label text-muted small">Type</label>
+                  <select name="serviceType" class="form-select" required>
+                    <option value="Domain">Domain</option>
+                    <option value="Server">Server</option>
+                    <option value="Email">Email</option>
+                    <option value="Software">Software</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+             <div class="col-md-4">
+                <label class="form-label text-muted small">Description</label>
+                <input type="text" name="description" class="form-control" placeholder="e.g., example.com Renewal" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted small">Amount</label>
+                <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+            </div>
+             <div class="col-md-5">
+                <label class="form-label text-muted small">Renewal Date</label>
+                <input type="datetime-local" name="renewalDate" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i data-feather="plus-square"></i> Add
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+         @{
+            var upcoming = Model.Where(i => i.RenewalDate >= DateTime.Now && i.RenewalDate <= DateTime.Now.AddMonths(1) && !i.IsPaid).ToList();
+         }
+         
+         @if(upcoming.Any())
+         {
+             <div class="alert alert-warning border-0 shadow-sm mb-4" style="background: rgba(255, 193, 7, 0.1); border-left: 5px solid #ffc107 !important;">
+                 <h5 class="alert-heading text-warning fw-bold mb-3"><i data-feather="bell" class="me-2"></i> Upcoming Renewals (Next 30 Days)</h5>
+                 <div class="table-responsive">
+                    <table class="table table-sm table-borderless align-middle mb-0">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>Client</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var up in upcoming)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@up.ClientName</td>
+                                    <td class="text-muted">@up.Description</td>
+                                    <td><span class="badge bg-light text-dark">@up.RenewalDate.ToString("MMM dd, yyyy")</span></td>
+                                    <td class="text-end">
+                                        <form asp-action="Renew" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@up.Id" />
+                                            <button type="submit" class="btn btn-sm btn-success px-3">Renew Now</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                 </div>
+             </div>
+         }
+    </div>
+</div>
+
+<div class="card card-modern">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <h6 class="text-dark fw-bold mb-0">Invoice History</h6>
+        <div style="width: 250px;">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0"><i data-feather="search" style="width: 14px;"></i></span>
+                <input type="text" id="invoiceSearch" class="form-control border-start-0" placeholder="Search invoices...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="invoiceTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Client / Description</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Renewal Date</th>
+                        <th>Status</th>
+                        <th class="text-end pe-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var inv in Model)
+                    {
+                        var isOverdue = inv.RenewalDate < DateTime.Now && !inv.IsPaid;
+                        <tr class="invoice-row @(isOverdue ? "bg-danger-light" : "")" style="@(isOverdue ? "background-color: rgba(220, 53, 69, 0.05);" : "")">
+                            <td class="ps-3">
+                                <div class="fw-bold">@inv.ClientName</div>
+                                <div class="small text-muted text-truncate" style="max-width: 250px;">@inv.Description</div>
+                            </td>
+                            <td><span class="badge bg-light text-secondary border">@inv.ServiceType</span></td>
+                            <td class="fw-bold">@inv.Amount.ToString("C")</td>
+                            <td>
+                                <div class="small @(isOverdue ? "text-danger fw-bold" : "text-dark")">
+                                    <i data-feather="calendar" style="width: 12px;"></i> @inv.RenewalDate.ToString("MMM dd, yyyy")
+                                </div>
+                            </td>
+                            <td>
+                                <form asp-action="TogglePaid" method="post" style="display:inline;">
+                                     <input type="hidden" name="id" value="@inv.Id" />
+                                     <button type="submit" class="btn btn-sm @(inv.IsPaid ? "btn-success" : "btn-warning") rounded-pill px-3 py-1" style="font-size: 0.75rem;">
+                                         @(inv.IsPaid ? "Paid" : "Pending")
+                                     </button>
+                                </form>
+                            </td>
+                            <td class="text-end pe-3">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a asp-action="Edit" asp-route-id="@inv.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i data-feather="edit-2" style="width:14px;"></i></a>
+                                    <form asp-action="Renew" method="post" style="display:inline;" title="Duplicate for next cycle">
+                                         <input type="hidden" name="id" value="@inv.Id" />
+                                         <button type="submit" class="btn btn-sm btn-outline-primary"><i data-feather="copy" style="width:14px;"></i></button>
+                                    </form>
+                                    <a asp-action="Print" asp-route-id="@inv.Id" target="_blank" class="btn btn-sm btn-outline-info" title="Print"><i data-feather="printer" style="width:14px;"></i></a>
+                                    <form asp-action="Delete" method="post" onsubmit="return confirm('Move to Trash?');" style="display:inline;">
+                                        <input type="hidden" name="id" value="@inv.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i data-feather="trash-2" style="width:14px;"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">No invoices found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#invoiceSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#invoiceTable .invoice-row").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}
+
+<!-- Quick Client Add Modal -->
+<div class="modal fade" id="addClientModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Quick Add Client</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form asp-controller="Client" asp-action="Create" method="post">
+            <input type="hidden" name="returnUrl" value="/Invoice/Index" />
+            <div class="mb-3">
+                <input type="text" name="name" class="form-control" placeholder="Contact Name" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" name="companyName" class="form-control" placeholder="Company Name">
+            </div>
+            <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Email">
+            </div>
+             <div class="mb-3">
+                <input type="text" name="phone" class="form-control" placeholder="Phone">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Save Client</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+@model List<OfficeSuite.Models.Todo>
+
+<h2>Trash Bin - Todos</h2>
+<a asp-action="Index" class="btn btn-secondary mb-3"><i data-feather="arrow-left"></i> Back to List</a>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Deleted On</th> <!-- Actually we don't have DeletedOn date yet, just showing item -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var todo in Model)
+            {
+                <tr>
+                    <td>@todo.Title <span class="badge bg-warning">@todo.StatusName</span></td>
+                    <td>-</td>
+                    <td>
+                        <form asp-action="Restore" method="post" style="display:inline;">
+                             <input type="hidden" name="id" value="@todo.Id" />
+                             <button type="submit" class="btn btn-success btn-sm"><i data-feather="refresh-ccw"></i> Restore</button>
+                        </form>
+                        <form asp-action="HardDelete" method="post" style="display:inline;" onsubmit="return confirm('PERMANENTLY DELETE? This cannot be undone.');">
+                             <input type="hidden" name="id" value="@todo.Id" />
+                             <button type="submit" class="btn btn-danger btn-sm"><i data-feather="x-circle"></i> Delete Permanently</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

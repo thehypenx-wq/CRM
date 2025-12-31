@@ -1,0 +1,67 @@
+@model OfficeSuite.Models.Ticket
+@{
+    ViewData["Title"] = "Edit Ticket";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-modern shadow">
+            <div class="card-header card-header-modern py-3">
+                 <h6 class="m-0 fw-bold text-primary">Edit Ticket #@Model.Id</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" required value="@Model.Subject">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Client</label>
+                            <select name="clientId" class="form-select" required>
+                                <option value="">Select Client...</option>
+                                @if (ViewBag.Clients != null)
+                                {
+                                    foreach (var c in ViewBag.Clients)
+                                    {
+                                        <option value="@c.Id" selected="@(c.Id == Model.ClientId ? "selected" : null)">@c.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                         <div class="col-md-6">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select">
+                                <option value="Low" selected="@(Model.Priority == "Low" ? "selected" : null)">Low</option>
+                                <option value="Medium" selected="@(Model.Priority == "Medium" ? "selected" : null)">Medium</option>
+                                <option value="High" selected="@(Model.Priority == "High" ? "selected" : null)">High</option>
+                                <option value="Urgent" selected="@(Model.Priority == "Urgent" ? "selected" : null)">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="5" required>@Model.Description</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Attachment (Optional)</label>
+                        @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                        {
+                            <div class="mb-2 small text-muted">Current file: @Model.AttachmentPath</div>
+                        }
+                        <input type="file" name="attachment" class="form-control">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Update Ticket</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

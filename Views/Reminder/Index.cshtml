@@ -1,0 +1,123 @@
+@model List<OfficeSuite.Models.Reminder>
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Client Reminders</h4>
+        <a asp-action="Trash" class="btn btn-outline-danger btn-sm"><i data-feather="trash-2"></i> Trash</a>
+    </div>
+    <div class="card-body px-4">
+        <div class="mb-4">
+            <h6 class="text-muted small mb-3">Set New Reminder</h6>
+            <form asp-action="Create" method="post" class="row g-3">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <select name="clientName" class="form-select" id="clientSelect" required>
+                            <option value="">Select Client...</option>
+                            @foreach(var c in (List<OfficeSuite.Models.Client>)ViewBag.Clients)
+                            {
+                                <option value="@c.Name">@c.Name (@c.ClientCode)</option>
+                            }
+                        </select>
+                        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#quickClientModal">
+                            <i data-feather="plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="message" class="form-control" placeholder="Reminder Message" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="datetime-local" name="reminderDate" class="form-control" required>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Client Modal -->
+        <div class="modal fade" id="quickClientModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content glass">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Quick Add Client</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small">Client Name</label>
+                            <input type="text" id="q_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Client Code</label>
+                            <input type="text" id="q_code" class="form-control" placeholder="e.g. CLI-123" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Phone (Optional)</label>
+                            <input type="text" id="q_phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btnSaveQuickClient">Save Client</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @section Scripts {
+            <script>
+                $("#btnSaveQuickClient").click(function() {
+                    var data = {
+                        name: $("#q_name").val(),
+                        clientCode: $("#q_code").val(),
+                        phone: $("#q_phone").val()
+                    };
+                    
+                    $.post("/Client/QuickAdd", data, function(res) {
+                        if(res.success) {
+                            var newOption = new Option(res.name + " (" + res.code + ")", res.name, true, true);
+                            $("#clientSelect").append(newOption).trigger('change');
+                            $("#quickClientModal").modal('hide');
+                            // Reset fields
+                            $("#q_name, #q_code, #q_phone").val('');
+                        } else {
+                            alert("Error: " + res.message);
+                        }
+                    });
+                });
+            </script>
+        }
+
+        <div class="list-group list-group-flush border-top">
+            @foreach (var rem in Model)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom-0">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">@rem.ClientName</div>
+                        <span class="text-muted overflow-hidden d-inline-block text-truncate" style="max-width: 400px;">@rem.Message</span>
+                        <div class="mt-1 small text-info">
+                            <i data-feather="clock" style="width: 14px; height: 14px;"></i> Due: @rem.ReminderDate.ToString("g")
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@rem.Id" class="btn btn-sm btn-outline-primary">
+                            <i data-feather="edit-2"></i> Edit
+                        </a>
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" name="id" value="@rem.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this reminder?')">
+                                <i data-feather="trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if(!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i data-feather="bell-off" style="width: 48px; height: 48px;" class="text-muted opacity-25 mb-2"></i>
+                    <p class="text-muted">No reminders set.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

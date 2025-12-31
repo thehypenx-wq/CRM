@@ -1,0 +1,132 @@
+@model List<OfficeSuite.Models.Ticket>
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i data-feather="life-buoy" class="me-2 text-primary"></i>Ticket Management
+    </h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i data-feather="plus"></i> New Ticket
+    </a>
+</div>
+
+<div class="card card-modern shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="border-0 rounded-start">ID</th>
+                        <th class="border-0">Subject</th>
+                        <th class="border-0">Client</th>
+                        <th class="border-0">Priority</th>
+                        <th class="border-0">Status</th>
+                        <th class="border-0">Created By</th>
+                        <th class="border-0">Attachment</th>
+                        <th class="border-0">Created At</th>
+                        <th class="border-0 rounded-end text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.Id</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">
+                                    <div class="fw-bold">@item.Subject</div>
+                                </a>
+                                <div class="small text-muted text-truncate" style="max-width: 250px;">@item.Description</div>
+                            </td>
+                            <td>@item.ClientName</td>
+                            <td>
+                                @if(item.Priority == "High") { <span class="badge bg-danger rounded-pill">High</span> }
+                                else if(item.Priority == "Urgent") { <span class="badge bg-danger rounded-pill">Urgent</span> }
+                                else if(item.Priority == "Low") { <span class="badge bg-success rounded-pill">Low</span> }
+                                else { <span class="badge bg-warning text-dark rounded-pill">Medium</span> }
+                            </td>
+                            <td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light dropdown-toggle border" type="button" data-bs-toggle="dropdown">
+                                            @item.Status
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <form asp-action="UpdateStatus" method="post">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="status" value="Open" />
+                                                    <button class="dropdown-item">Open</button>
+                                                </form>
+                                            </li>
+                                             <li>
+                                                <form asp-action="UpdateStatus" method="post">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="status" value="In Progress" />
+                                                    <button class="dropdown-item">In Progress</button>
+                                                </form>
+                                            </li>
+                                             <li>
+                                                <form asp-action="UpdateStatus" method="post">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="status" value="Resolved" />
+                                                    <button class="dropdown-item">Resolved</button>
+                                                </form>
+                                            </li>
+                                             <li>
+                                                <form asp-action="UpdateStatus" method="post">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="status" value="Closed" />
+                                                    <button class="dropdown-item">Closed</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="badge @(item.Status == "Closed" ? "bg-secondary" : "bg-success") rounded-pill">@item.Status</span>
+                                }
+                            </td>
+                            <td>@item.CreatorName</td>
+                            <td>
+                                @if(!string.IsNullOrEmpty(item.AttachmentPath))
+                                {
+                                    <a href="/Ticket/Download?path=@item.AttachmentPath" class="text-primary" title="Download">
+                                        <i data-feather="paperclip"></i>
+                                    </a>
+                                }
+                                else { <span class="text-muted">-</span> }
+                            </td>
+                            <td>@item.CreatedAt.ToString("MMM dd")</td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary border-0" title="Edit">
+                                    <i data-feather="edit-2"></i>
+                                </a>
+                                @if(User.IsInRole("Admin"))
+                                {
+                                    <form asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Delete this ticket?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button class="btn btn-sm btn-outline-danger border-0" title="Delete"><i data-feather="trash-2"></i></button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i data-feather="inbox" style="width: 48px; height: 48px;" class="mb-2"></i>
+                                <p>No tickets found.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

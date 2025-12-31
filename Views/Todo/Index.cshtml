@@ -1,0 +1,240 @@
+@model List<OfficeSuite.Models.Todo>
+
+
+<div class="card card-modern mb-4">
+    <div class="card-body">
+         <form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Title</label>
+                <input type="text" name="title" class="form-control" placeholder="New Task" required>
+            </div>
+            <div class="col-md-2">
+                 <label class="form-label small text-muted">Project</label>
+                <select name="projectId" class="form-select">
+                    <option value="">No Project</option>
+                    @if (ViewBag.Projects != null)
+                    {
+                        foreach (var p in ViewBag.Projects)
+                        {
+                            <option value="@p.Id">@p.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                 <label class="form-label small text-muted">Assign To</label>
+                <select name="assignedToUserId" class="form-select">
+                    <option value="">Unassigned</option>
+                    @if (ViewBag.Users != null)
+                    {
+                        foreach (var u in ViewBag.Users)
+                        {
+                            <option value="@u.Id">@u.Username</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                 <label class="form-label small text-muted">Due Date</label>
+                <input type="datetime-local" name="dueDate" class="form-control">
+            </div>
+             <div class="col-md-2">
+                  <label class="form-label small text-muted">Status</label>
+                <select name="statusId" class="form-select">
+                    @if (ViewBag.Statuses != null)
+                    {
+                        foreach (var s in ViewBag.Statuses)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+             <div class="col-md-3">
+                 <label class="form-label small text-muted">Attachments</label>
+                <input type="file" name="attachments" class="form-control" multiple>
+            </div>
+            <div class="col-md-7">
+                <input type="text" name="remark" class="form-control" placeholder="Remarks...">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i data-feather="plus"></i> Add Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>My Todo List</h3>
+    <a asp-action="Trash" class="btn btn-outline-danger"><i data-feather="trash-2"></i> Trash</a>
+</div>
+
+<!-- ... (Form Unchanged) ... -->
+
+<div class="row">
+    @foreach (var todo in Model)
+    {
+        var statusClass = "status-border-" + (todo.StatusName?.Replace(" ", "") ?? "Pending");
+        <div class="col-md-4 mb-3">
+            <div class="card card-modern shadow-sm h-100 @statusClass position-relative" style="border-left-width: 5px;">
+                <!-- Temp Delete Button (Top Right) -->
+                <div class="position-absolute top-0 end-0 p-2 d-flex gap-1">
+                     <a asp-action="Edit" asp-route-id="@todo.Id" class="btn btn-link text-primary p-0" title="Edit Task">
+                        <i data-feather="edit" style="width:18px; height:18px;"></i>
+                    </a>
+                    <form asp-action="Delete" method="post" onsubmit="return confirm('Move to Trash?');">
+                        <input type="hidden" name="id" value="@todo.Id" />
+                        <button type="submit" class="btn btn-link text-danger p-0" title="Temporary Delete">
+                            <i data-feather="trash-2" style="width:18px; height:18px;"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <!-- Status Badge/Dropdown -->
+                         <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle rounded-pill px-2 py-0" type="button" data-bs-toggle="dropdown" 
+                                style="background-color: @todo.StatusColor; color: @(todo.StatusColor == "#ffc107" ? "black" : "white"); border: none; font-size:0.75rem;">
+                                @todo.StatusName
+                            </button>
+                            <ul class="dropdown-menu">
+                                @if(ViewBag.Statuses != null)
+                                {
+                                    foreach(var status in ViewBag.Statuses)
+                                    {
+                                        <li>
+                                            <form asp-action="UpdateStatus" method="post">
+                                                <input type="hidden" name="id" value="@todo.Id" />
+                                                <input type="hidden" name="statusId" value="@status.Id" />
+                                                <button type="submit" class="dropdown-item">@status.Name</button>
+                                            </form>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5 class="card-title text-truncate" title="@todo.Title">
+                        <span class="@(todo.StatusName == "Completed" ? "text-muted text-decoration-line-through" : "")">@todo.Title</span>
+                    </h5>
+                    
+                    <div class="mb-2">
+                         @if(!string.IsNullOrEmpty(todo.ProjectName)) { <span class="badge bg-light text-dark border me-1">@todo.ProjectName</span> }
+                         @if(!string.IsNullOrEmpty(todo.AssignedToName)) { 
+                             <span class="badge bg-light text-primary border me-1" title="Assigned To"><i data-feather="user" style="width:10px;"></i> @todo.AssignedToName</span> 
+                         }
+                         @if(!string.IsNullOrEmpty(todo.CreatedByName)) {
+                              <span class="badge bg-light text-secondary border" title="Created By"><i data-feather="edit-3" style="width:10px;"></i> @todo.CreatedByName</span>
+                         }
+                    </div>
+
+                     @if(todo.DueDate.HasValue)
+                    {
+                        <p class="card-text small text-muted mb-1"><i data-feather="calendar" style="width:12px;"></i> Due: @todo.DueDate.Value.ToShortDateString()</p>
+                    }
+                    @if(!string.IsNullOrEmpty(todo.Remark))
+                    {
+                        <p class="card-text small text-muted fst-italic text-truncate"><i data-feather="message-square" style="width:12px;"></i> @todo.Remark</p>
+                    }
+
+                    <!-- Thumbnails & Downloads -->
+                    @if(todo.Attachments != null && todo.Attachments.Any())
+                    {
+                        <div class="mt-2 d-flex flex-column gap-1">
+                            @foreach(var att in todo.Attachments)
+                            {
+                                var ext = System.IO.Path.GetExtension(att.FileName).ToLower();
+                                var isImage = (ext == ".jpg" || ext == ".png" || ext == ".jpeg" || ext == ".gif" || ext == ".webp");
+                                
+                                <div class="attachment-card">
+                                    @if(isImage)
+                                    {
+                                        <div class="attachment-icon p-0 overflow-hidden">
+                                            <img src="@att.FilePath" style="width:100%; height:100%; object-fit:cover;" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="attachment-icon"><i data-feather="file-text" style="width:16px;"></i></div>
+                                    }
+                                    <div class="flex-grow-1 text-truncate">
+                                        <div class="small fw-bold text-truncate" title="@att.FileName">@att.FileName</div>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        @if(isImage)
+                                        {
+                                            <a href="@att.FilePath" target="_blank" class="download-btn text-primary" title="View">
+                                                <i data-feather="eye" style="width:14px;"></i>
+                                            </a>
+                                        }
+                                            <a href="/Todo/Download?path=@att.FilePath" class="download-btn" title="Download">
+                                                <i data-feather="download" style="width:14px;"></i>
+                                            </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Comments Section -->
+                    <div class="mt-3 pt-3 border-top">
+                        <h6 class="small fw-bold mb-2"><i data-feather="message-circle" style="width:14px;"></i> Comments</h6>
+                        @if(todo.Comments != null && todo.Comments.Any())
+                        {
+                            <div class="table-responsive" style="max-height: 150px; overflow-y: auto;">
+                                <table class="table table-sm table-borderless mb-0" style="font-size: 0.75rem;">
+                                    <thead class="text-muted border-bottom">
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Comment</th>
+                                            <th class="text-end">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(var com in todo.Comments)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-primary">@com.UserName</td>
+                                                <td class="text-wrap">
+                                                    @com.Comment
+                                                    @if(!string.IsNullOrEmpty(com.AttachmentPath))
+                                                    {
+                                                        var fileName = System.IO.Path.GetFileName(com.AttachmentPath);
+                                                        <div class="mt-1">
+                                                            <a href="/Todo/Download?path=@com.AttachmentPath" class="btn btn-sm btn-outline-secondary p-0 px-1" style="font-size: 0.7rem;">
+                                                                <i data-feather="paperclip" style="width:10px;"></i> @fileName
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                </td>
+                                                <td class="text-muted text-end">@com.CreatedAt.ToString("MM/dd HH:mm")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="small text-muted fst-italic mb-2">No comments yet.</p>
+                        }
+
+                        <form asp-action="AddComment" method="post" enctype="multipart/form-data" class="mt-2">
+                            <input type="hidden" name="todoId" value="@todo.Id" />
+                            <div class="input-group input-group-sm">
+                                <label class="btn btn-outline-secondary" title="Attach File">
+                                    <i data-feather="paperclip" style="width:12px;"></i>
+                                    <input type="file" name="attachment" class="d-none">
+                                </label>
+                                <input type="text" name="comment" class="form-control" placeholder="Add a comment..." required>
+                                <button type="submit" class="btn btn-outline-primary"><i data-feather="send" style="width:12px;"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>

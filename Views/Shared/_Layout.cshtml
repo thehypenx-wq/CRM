@@ -1,0 +1,328 @@
+﻿@using OfficeSuite.Services
+@inject NotificationService _notificationService
+@using System.Security.Claims
+@{
+    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    int? userId = userIdString != null ? int.Parse(userIdString) : null;
+    var notifications = userId.HasValue ? _notificationService.GetUnreadNotifications(userId.Value) : new List<OfficeSuite.Models.Notification>();
+    var unreadCount = notifications.Count;
+}
+@inject OfficeSuite.Services.PermissionService PermissionService
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HypeNXCRM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/OfficeSuite.styles.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light navbar-modern mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HypeNXCRM</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                    <form asp-controller="Search" asp-action="Index" method="get" class="d-flex mx-auto" style="width: 40%;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill pe-0">
+                                <i data-feather="search" style="width: 18px; color: #6c757d;"></i>
+                            </span>
+                            <input type="text" name="query" class="form-control border-start-0 rounded-end-pill ps-2" placeholder="Search tasks, clients, invoices..." aria-label="Search">
+                        </div>
+                    </form>
+                    <ul class="navbar-nav align-items-center">
+                         <!-- Notifications -->
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown" id="notifDropdown">
+                                <i data-feather="bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="@(unreadCount > 0 ? "" : "display:none;")">
+                                    @unreadCount
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                                <li><h6 class="dropdown-header">Notifications</h6></li>
+                                @if(notifications.Any())
+                                {
+                                    foreach(var n in notifications)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <small class="fw-bold">@n.Type</small><br>
+                                                <span class="text-wrap">@n.Message</span><br>
+                                                <small class="text-muted">@n.CreatedAt.ToString("g")</small>
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li><span class="dropdown-item text-muted">No new notifications</span></li>
+                                }
+                            </ul>
+                        </li>
+
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-danger btn-sm border-0" asp-controller="Account" asp-action="Logout" title="Logout">
+                                <i data-feather="log-out" style="width: 18px;"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    }
+
+    <div class="container-fluid @(User.Identity?.IsAuthenticated != true ? "flex-grow-1 d-flex align-items-center justify-content-center" : "")">
+        <div class="row w-100">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block glass sidebar collapse rounded-3 shadow-sm my-2" style="min-height: 80vh;">
+                    <div class="position-sticky">
+                        <!-- Profile Card -->
+                        <div class="sidebar-profile">
+                            @{
+                                var initials = User.Identity.Name?.Substring(0, Math.Min(2, User.Identity.Name.Length)).ToUpper() ?? "U";
+                                string profileImg = null;
+                            }
+                            @inject OfficeSuite.Data.SqlHelper _sqlHelper
+                            @{
+                                if(userId.HasValue)
+                                {
+                                    var imgObj = _sqlHelper.ExecuteScalar("SELECT ProfileImagePath FROM Users WHERE Id = @Id", new Microsoft.Data.SqlClient.SqlParameter[] { new Microsoft.Data.SqlClient.SqlParameter("@Id", userId.Value) });
+                                    if(imgObj != null && imgObj != DBNull.Value)
+                                    {
+                                        profileImg = imgObj.ToString();
+                                    }
+                                }
+                            }
+
+                            <div class="profile-avatar shadow-sm">
+                                @if(!string.IsNullOrEmpty(profileImg))
+                                {
+                                    <img src="@profileImg" class="w-100 h-100" />
+                                }
+                                else
+                                {
+                                    <span>@initials</span>
+                                }
+                            </div>
+                            
+                            <div class="profile-info">
+                                <h6 class="profile-name">@User.Identity.Name</h6>
+                                <span class="profile-role">@User.FindFirst(ClaimTypes.Role)?.Value</span>
+                                <a href="/Profile/Index" class="profile-edit-link">Edit Profile</a>
+                            </div>
+                        </div>
+
+
+
+
+                        <ul class="nav flex-column px-3 pb-3">
+                            @if (PermissionService.HasPermission("Dashboard"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Home/Index">
+                                        <span data-feather="home"></span>
+                                        Dashboard
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionService.HasPermission("TodoList"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Todo/Index">
+                                        <span data-feather="file"></span>
+                                        Todo List
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionService.HasPermission("GroupChat"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Chat" asp-action="Index">
+                                        <span data-feather="message-circle"></span>
+                                        Group Chat
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionService.HasPermission("Tickets"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Ticket" asp-action="Index">
+                                        <span data-feather="tag"></span>
+                                        Tickets
+                                    </a>
+                                </li>
+                            }
+                            
+                            @if (PermissionService.HasPermission("Financials"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Transaction" asp-action="Index">
+                                        <span data-feather="dollar-sign"></span>
+                                        Income/Expense
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("Invoices"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Invoice" asp-action="Index">
+                                        <span data-feather="file-text"></span>
+                                        Renewals/Invoices
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("Planner"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Planner" asp-action="Index">
+                                        <span data-feather="calendar"></span>
+                                        Planner
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("Reminders"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Reminder" asp-action="Index">
+                                        <span data-feather="bell"></span>
+                                        Reminders
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("BulkEmail"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="BulkEmail" asp-action="Index">
+                                        <span data-feather="mail"></span>
+                                        Bulk Email
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("Clients"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Client" asp-action="Index">
+                                        <span data-feather="users"></span>
+                                        Clients
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("Projects"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Project" asp-action="Index">
+                                        <span data-feather="briefcase"></span>
+                                        Projects
+                                    </a>
+                                </li>
+                            }
+
+                            @if (PermissionService.HasPermission("UserManagement"))
+                            {
+                                <li class="nav-item mt-3">
+                                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase small">
+                                        <span>Administration</span>
+                                    </h6>
+                                    <a class="nav-link" asp-controller="User" asp-action="Index">
+                                        <span data-feather="user-check"></span>
+                                        User Management
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </nav>
+
+                <main class="col-md-9 col-lg-10 px-md-4 py-2">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i data-feather="check-circle" class="me-2"></i> @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i data-feather="alert-circle" class="me-2"></i> @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @RenderBody()
+                </main>
+            }
+            else
+            {
+                <main class="col-12 text-center">
+                    @RenderBody()
+                </main>
+            }
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function() {
+            // Sidebar Active State
+            var path = window.location.pathname;
+            $('#sidebar .nav-link').each(function() {
+                var href = $(this).attr('href');
+                if (path === href || (path === '/' && href === '/Home/Index') || (path.startsWith(href) && href !== '/Home/Index')) {
+                    $('#sidebar .nav-link').removeClass('active');
+                    $(this).addClass('active');
+                }
+            });
+
+            @if (User.Identity?.IsAuthenticated == true) 
+            {
+                <text>
+                $('#notifDropdown').on('show.bs.dropdown', function () {
+                    // Hide badge immediately
+                    $('#notifBadge').hide();
+                    // Call API to mark as read
+                    $.post('/Notification/MarkAllAsRead', function() {
+                        console.log("Notifications marked as read.");
+                    }).fail(function() {
+                        console.log("Error marking notifications read.");
+                    });
+                });
+                </text>
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

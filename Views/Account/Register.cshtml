@@ -1,0 +1,40 @@
+@model OfficeSuite.Models.RegisterViewModel
+
+<div class="auth-page-bg">
+    <div class="auth-glass-card">
+        <div class="auth-brand">HypeNXCRM</div>
+        <h4 class="mb-4 fw-bold">Create Account</h4>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+            <div class="mb-3 text-start">
+                <label asp-for="Username" class="form-label small opacity-75">Username</label>
+                <input asp-for="Username" class="form-control glass-input-auth" placeholder="Pick a username" />
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+            <div class="mb-3 text-start">
+                <label asp-for="Email" class="form-label small opacity-75">Email Address</label>
+                <input asp-for="Email" class="form-control glass-input-auth" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-3 text-start">
+                <label asp-for="Password" class="form-label small opacity-75">Password</label>
+                <input asp-for="Password" type="password" class="form-control glass-input-auth" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="mb-4 text-start">
+                <label asp-for="ConfirmPassword" class="form-label small opacity-75">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control glass-input-auth" placeholder="••••••••" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="auth-btn w-100 py-2 fw-bold">Register Account</button>
+            <div class="mt-4">
+                <span class="opacity-75 small">Already have an account?</span>
+                <a asp-action="Login" class="auth-link ms-1 fw-bold">Sign In</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

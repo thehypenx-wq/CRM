@@ -1,0 +1,163 @@
+@model List<OfficeSuite.Models.AppEvent>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Planner / My Schedule</h2>
+        <div class="badge bg-primary glass p-2 px-3">@Model.Count(e => e.EndDate >= DateTime.Now) Active Events</div>
+    </div>
+</div>
+
+<div class="card glass mb-5 border-0 shadow-lg">
+    <div class="card-header bg-transparent pt-4 px-4 border-bottom-0">
+        <h6 class="text-primary fw-bold mb-0"><i data-feather="plus-circle" class="me-2"></i>Schedule New Event</h6>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label text-muted small">Event Title</label>
+                    <input type="text" name="title" class="form-control glass-input" placeholder="What's happening?" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small">Start Date & Time</label>
+                    <input type="datetime-local" name="startDate" class="form-control glass-input" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small">End Date & Time</label>
+                    <input type="datetime-local" name="endDate" class="form-control glass-input" required>
+                </div>
+                <div class="col-md-10">
+                    <label class="form-label text-muted small">Description</label>
+                    <textarea name="description" class="form-control glass-input" rows="1" placeholder="Add some details..."></textarea>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                         Add Event
+                    </button>
+                </div>
+                <div class="col-12">
+                    <div class="bg-light-glass p-2 rounded d-flex align-items-center">
+                        <i data-feather="paperclip" class="text-muted me-2" style="width:16px;"></i>
+                        <input type="file" name="attachments" class="form-control form-control-sm border-0 bg-transparent" multiple>
+                        <span class="text-muted small ms-2">Optional attachments</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <h5 class="text-primary fw-bold d-flex align-items-center">
+            <span class="bg-primary rounded-circle p-1 me-2" style="width:8px; height:8px; display:inline-block;"></span>
+            Upcoming Events
+        </h5>
+    </div>
+    @foreach (var evt in Model.Where(e => e.EndDate >= DateTime.Now).OrderBy(e => e.StartDate))
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 glass border-0 shadow-sm hover-up">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-primary-soft rounded p-2 text-primary">
+                            <i data-feather="calendar"></i>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary text-white mb-1">Upcoming</span>
+                            <div class="small text-muted font-monospace">ID #@evt.Id</div>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">@evt.Title</h5>
+                    <p class="card-text text-muted small mb-3" style="min-height: 40px;">@(string.IsNullOrEmpty(evt.Description) ? "No description provided." : evt.Description)</p>
+                    <div class="bg-light-glass p-2 rounded-3 mb-3">
+                         <div class="small fw-bold text-primary mb-1">Schedule</div>
+                         <div class="small text-muted d-flex align-items-center">
+                             <i data-feather="clock" class="me-2" style="width:12px;"></i>
+                             @evt.StartDate.ToString("MMM dd, HH:mm") - @evt.EndDate.ToString("HH:mm")
+                         </div>
+                    </div>
+                    @if(evt.Attachments != null && evt.Attachments.Any())
+                    {
+                        <div class="d-flex flex-column gap-1 mb-3">
+                             @foreach(var att in evt.Attachments)
+                            {
+                                var ext = System.IO.Path.GetExtension(att.FileName).ToLower();
+                                var isImage = (ext == ".jpg" || ext == ".png" || ext == ".jpeg" || ext == ".gif" || ext == ".webp");
+
+                                <div class="attachment-card bg-white bg-opacity-50">
+                                    @if(isImage)
+                                    {
+                                        <div class="attachment-icon p-0 overflow-hidden" style="width:24px; height:24px;">
+                                            <img src="@att.FilePath" style="width:100%; height:100%; object-fit:cover;" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="attachment-icon" style="width:24px; height:24px;"><i data-feather="file" style="width:12px;"></i></div>
+                                    }
+                                    <div class="flex-grow-1 text-truncate">
+                                        <span class="small fw-bold text-truncate" style="max-width: 120px;" title="@att.FileName">@att.FileName</span>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        @if(isImage)
+                                        {
+                                            <a href="@att.FilePath" target="_blank" class="download-btn text-primary" title="View" style="padding:2px;">
+                                                <i data-feather="eye" style="width:12px;"></i>
+                                            </a>
+                                        }
+                                        <a href="@att.FilePath" download="@att.FileName" class="download-btn" title="Download" style="padding:2px;">
+                                            <i data-feather="download" style="width:12px;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-footer bg-transparent border-top-0 px-4 pb-4 d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@evt.Id" class="btn btn-sm btn-outline-primary w-100 rounded-pill"><i data-feather="edit-2"></i> Edit</a>
+                    <form asp-action="Delete" method="post" class="w-100">
+                        <input type="hidden" name="id" value="@evt.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill" onclick="return confirm('Remove event?');">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row mt-5">
+    <div class="col-12 mb-3">
+        <h5 class="text-muted fw-bold d-flex align-items-center opacity-75">
+            <span class="bg-secondary rounded-circle p-1 me-2" style="width:8px; height:8px; display:inline-block;"></span>
+            Expired / Past Events
+        </h5>
+    </div>
+    @foreach (var evt in Model.Where(e => e.EndDate < DateTime.Now).OrderByDescending(e => e.StartDate))
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 glass border-0 opacity-75 grayscale-hover transition">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3 text-muted">
+                        <i data-feather="clock"></i>
+                        <span class="badge bg-light text-dark">Expired</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">@evt.Title</h5>
+                    <p class="card-text text-truncate small">@evt.Description</p>
+                    <div class="small text-muted mt-2">
+                         @evt.StartDate.ToString("d") - @evt.EndDate.ToString("d")
+                    </div>
+                </div>
+                 <div class="card-footer bg-transparent border-top-0 px-4 pb-4">
+                    <form asp-action="Delete" method="post" class="w-100">
+                        <input type="hidden" name="id" value="@evt.Id" />
+                        <button type="submit" class="btn btn-sm btn-link text-danger w-100 text-decoration-none" onclick="return confirm('Delete permanently?');">
+                            <i data-feather="trash-2"></i> Delete Permanently
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,53 @@
+@model OfficeSuite.Models.Client
+
+@{
+    ViewData["Title"] = "Edit Client";
+}
+
+<div class="card card-modern">
+    <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+        <h4 class="mb-0">Edit Client</h4>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" />
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small">Client Code</label>
+                    <input asp-for="ClientCode" class="form-control" required />
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label text-muted small">Contact Name</label>
+                    <input asp-for="Name" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small">Company Name</label>
+                    <input asp-for="CompanyName" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small">Email Address</label>
+                    <input asp-for="Email" type="email" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small">Phone Number</label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-muted small">Address</label>
+                    <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-muted small">Remarks</label>
+                    <textarea asp-for="Remark" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="col-12 mt-4 text-end">
+                    <a asp-action="Index" class="btn btn-light me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i data-feather="save"></i> Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

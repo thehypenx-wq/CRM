@@ -1,0 +1,279 @@
+@{
+    ViewData["Title"] = "Group Chat";
+}
+
+<div class="row h-100 g-0">
+    <!-- Sidebar: Channels -->
+    <div class="col-md-3 border-end bg-white border-opacity-10 glass rounded-start-3" style="height: calc(100vh - 120px); min-height: 600px; overflow-y: auto;">
+        <div class="p-3">
+            <h5 class="fw-bold mb-4 d-flex align-items-center">
+                <i data-feather="hash" class="me-2 text-primary"></i> Channels
+            </h5>
+             <!-- Create New Section (Moved to Top) -->
+            <form asp-action="CreateGroup" method="post" class="mb-4">
+                <label class="form-label small text-muted">Create New Channel</label>
+                <div class="input-group input-group-sm">
+                    <input type="text" name="name" class="form-control" placeholder="Channel name">
+                    <button class="btn btn-primary"><i data-feather="plus"></i></button>
+                </div>
+            </form>
+
+            <div class="list-group list-group-flush mb-4" id="channelList">
+                 @if(ViewBag.Groups != null) 
+                 {
+                     foreach(var g in ViewBag.Groups)
+                     {
+                         <a href="#" class="list-group-item list-group-item-action group-link border-0 rounded-3 mb-1 @(g == "General" ? "active" : "")" data-group="@g">
+                             <i data-feather="chevron-right" class="me-2" style="width: 14px;"></i> @g
+                         </a>
+                     }
+                 }
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="col-md-9 d-flex flex-column bg-white bg-opacity-10 glass rounded-end-3" style="height: calc(100vh - 120px); min-height: 600px;">
+        <!-- Chat Header -->
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white bg-opacity-25">
+            <div>
+                <h6 class="mb-0 fw-bold" id="currentRoomName"># General</h6>
+                <small class="text-success" style="font-size: 0.7rem;">
+                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" style="width: 8px; height: 8px;"></span> Live Polling
+                </small>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                    @(ViewBag.CurrentUserName?.Substring(0, 1).ToUpper())
+                </div>
+                <span class="fw-bold small">@ViewBag.CurrentUserName</span>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div class="flex-grow-1 p-4" id="chatArea" style="overflow-y: auto; background-color: rgba(0,0,0,0.02);">
+            <div id="messagesList" class="d-flex flex-column gap-3">
+                <!-- Messages will be injected here -->
+            </div>
+        </div>
+
+        <!-- Chat Footer: Input -->
+        <div class="p-3 bg-white bg-opacity-25 border-top">
+            <div class="input-group">
+                <button class="btn btn-light border" onclick="document.getElementById('fileInput').click()" title="Upload Image">
+                    <i data-feather="image"></i>
+                </button>
+                <input type="file" id="fileInput" class="d-none" onchange="uploadFile()">
+                <input type="text" id="messageInput" class="form-control" placeholder="Type a message to #General..." style="border-radius: 0;">
+                <button id="sendButton" class="btn btn-primary px-4">
+                    <i data-feather="send"></i>
+                </button>
+            </div>
+            <input type="hidden" id="currentGroup" value="General" />
+        </div>
+    </div>
+</div>
+
+<style>
+    .message-bubble {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 18px;
+        position: relative;
+        font-size: 0.9rem;
+        word-wrap: break-word;
+    }
+    .message-me {
+        align-self: flex-end;
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    .message-others {
+        align-self: flex-start;
+        background: white;
+        color: #333;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .message-info {
+        font-size: 0.7rem;
+        margin-top: 4px;
+        opacity: 0.7;
+    }
+    .group-link.active {
+        background-color: rgba(78, 115, 223, 0.1) !important;
+        color: #4e73df !important;
+        font-weight: bold;
+    }
+    .chat-img {
+        max-width: 250px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .chat-img:hover {
+        transform: scale(1.02);
+    }
+</style>
+
+<script>
+    var currentUser = "@ViewBag.CurrentUserName";
+    var currentGroup = "General";
+    var chatArea = document.getElementById("chatArea");
+    var isScrolledToBottom = true;
+    var lastMessageCount = 0;
+
+    function fetchMessages() {
+        var group = document.getElementById("currentGroup").value;
+        fetch('/Chat/GetMessages?groupName=' + group)
+            .then(response => response.json())
+            .then(data => {
+                var list = document.getElementById("messagesList");
+                
+                // If group changed or message count decreased (unlikely but safe), clear and reset
+                if (data.length < lastMessageCount) {
+                    list.innerHTML = '';
+                    lastMessageCount = 0;
+                }
+
+                if (data.length > lastMessageCount) {
+                    var newMessages = data.slice(lastMessageCount);
+                    newMessages.forEach(msg => {
+                        var isMe = msg.user === currentUser;
+                        var div = document.createElement("div");
+                        div.className = "d-flex flex-column " + (isMe ? "align-items-end" : "align-items-start");
+                        
+                        var bubble = document.createElement("div");
+                        bubble.className = "message-bubble " + (isMe ? "message-me" : "message-others");
+                        
+                        if(!isMe) {
+                            bubble.innerHTML += `<div class="fw-bold mb-1" style="font-size: 0.75rem">${msg.user}</div>`;
+                        }
+
+                        if(msg.message.startsWith("/uploads/")) {
+                            var isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.message);
+                            if (isImage) {
+                                bubble.innerHTML += `
+                                    <div class="position-relative">
+                                        <a href="${msg.message}" target="_blank"><img src="${msg.message}" class="chat-img" /></a>
+                                        <a href="${msg.message}" target="_blank" class="btn btn-sm btn-light position-absolute bottom-0 start-0 m-2 opacity-75" title="View">
+                                            <i data-feather="eye" style="width:14px; height:14px;"></i>
+                                        </a>
+                                        <a href="${msg.message}" download class="btn btn-sm btn-dark position-absolute bottom-0 end-0 m-2 opacity-75" title="Download">
+                                            <i data-feather="download" style="width:14px; height:14px;"></i>
+                                        </a>
+                                    </div>`;
+                            } else {
+                                var filename = msg.message.split('/').pop().substring(36);
+                                bubble.innerHTML += `
+                                    <div class="attachment-card text-dark p-2 bg-light border rounded d-flex align-items-center mt-2" style="min-width: 200px;">
+                                        <div class="me-2 text-primary"><i data-feather="file" style="width:20px; height:20px;"></i></div>
+                                        <div class="flex-grow-1 text-truncate me-2" style="max-width: 180px;">
+                                            <div class="small fw-bold text-truncate" title="${filename}">${filename || 'Attachment'}</div>
+                                        </div>
+                                        <a href="${msg.message}" download="${filename}" class="btn btn-sm btn-primary" title="Download">
+                                            <i data-feather="download" style="width:14px; height:14px;"></i>
+                                        </a>
+                                    </div>`;
+                            }
+                        } else {
+                            bubble.innerHTML += `<div>${msg.message}</div>`;
+                        }
+                        
+                        bubble.innerHTML += `<div class="message-info text-end">${msg.timestamp}</div>`;
+                        div.appendChild(bubble);
+                        list.appendChild(div);
+                    });
+
+                    lastMessageCount = data.length;
+                    feather.replace();
+
+                    if(isScrolledToBottom) {
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                    }
+                }
+            });
+    }
+
+    fetchMessages();
+    setInterval(fetchMessages, 2000);
+
+    chatArea.addEventListener('scroll', function(){
+        if(chatArea.scrollTop + chatArea.clientHeight >= chatArea.scrollHeight - 50) {
+            isScrolledToBottom = true;
+        } else {
+            isScrolledToBottom = false;
+        }
+    });
+
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+    document.getElementById("messageInput").addEventListener("keypress", function(e) {
+        if(e.key === 'Enter') sendMessage();
+    });
+
+    function sendMessage() {
+        var input = document.getElementById("messageInput");
+        var message = input.value;
+        var group = document.getElementById("currentGroup").value;
+        
+        if (message) {
+             var formData = new FormData();
+             formData.append("message", message);
+             formData.append("groupName", group);
+
+             fetch('/Chat/SendMessage', { method: 'POST', body: formData })
+             .then(() => {
+                 input.value = '';
+                 fetchMessages();
+             });
+        }
+    }
+
+    document.querySelectorAll('.group-link').forEach(item => {
+        item.addEventListener('click', event => {
+            event.preventDefault();
+            document.querySelectorAll('.group-link').forEach(l => l.classList.remove('active'));
+            item.classList.add('active');
+            
+            var group = item.getAttribute('data-group');
+            document.getElementById("currentGroup").value = group;
+            document.getElementById("currentRoomName").innerText = "# " + group;
+            document.getElementById("messageInput").placeholder = "Type a message to #" + group + "...";
+            
+            // Reset message list for new group
+            document.getElementById("messagesList").innerHTML = '';
+            lastMessageCount = 0;
+            isScrolledToBottom = true; // Ensure it scrolls to bottom after first fetch of new group
+            
+            fetchMessages();
+        })
+    });
+
+    function uploadFile() {
+        var input = document.getElementById('fileInput');
+        var file = input.files[0];
+        if(!file) return;
+
+        var formData = new FormData();
+        formData.append("file", file);
+
+        fetch('/Chat/UploadAttachment', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => {
+            if(data.url) {
+                 var group = document.getElementById("currentGroup").value;
+                 var formDataMsg = new FormData();
+                 formDataMsg.append("message", data.url);
+                 formDataMsg.append("groupName", group);
+
+                 fetch('/Chat/SendMessage', { method: 'POST', body: formDataMsg })
+                 .then(() => {
+                     input.value = '';
+                     fetchMessages();
+                 });
+            }
+        });
+    }
+</script>
+

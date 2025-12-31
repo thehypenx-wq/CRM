@@ -1,0 +1,112 @@
+@model List<OfficeSuite.Models.Project>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Project Master</h2>
+        <a asp-action="Trash" class="btn btn-outline-danger btn-sm glass">
+            <i data-feather="trash-2"></i> Trash Bin
+        </a>
+    </div>
+</div>
+
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0">
+        <h6 class="text-primary fw-bold mb-0">Create New Project</h6>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label text-muted small">Project Code</label>
+                <input type="text" name="projectCode" class="form-control" placeholder="e.g., PRJ-001">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label text-muted small">Project Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., E-commerce Redesign" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-muted small">Description</label>
+                <input type="text" name="description" class="form-control" placeholder="Brief project scope...">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i data-feather="plus-circle"></i> Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4 ms-auto">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i data-feather="search" style="width: 14px;"></i></span>
+            <input type="text" id="projectSearch" class="form-control border-start-0" placeholder="Search projects...">
+        </div>
+    </div>
+</div>
+
+<div class="row" id="projectList">
+    @foreach (var proj in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card card-modern h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-light rounded p-2">
+                             <i data-feather="briefcase" class="text-primary"></i>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-light text-dark border small d-block mb-1">ID: @proj.Id</div>
+                            @if(!string.IsNullOrEmpty(proj.ProjectCode))
+                            {
+                                <div class="badge bg-primary text-white small">@proj.ProjectCode</div>
+                            }
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">@proj.Name</h5>
+                    <p class="card-text text-muted small mb-3">@(string.IsNullOrEmpty(proj.Description) ? "No description provided." : proj.Description)</p>
+                    <div class="d-flex align-items-center justify-content-between text-muted small">
+                        <span><i data-feather="calendar" style="width: 14px; height: 14px;" class="me-1"></i> @proj.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        <span class="badge bg-light text-muted fw-normal border">By: @proj.CreatedByUsername</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-top-0 px-4 pb-4 d-flex gap-2">
+                    <a asp-action="Board" asp-route-id="@proj.Id" class="btn btn-sm btn-primary w-100">
+                        <i data-feather="trello"></i> Board
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@proj.Id" class="btn btn-sm btn-outline-info w-100">
+                        <i data-feather="edit-2"></i> Edit
+                    </a>
+                    <form asp-action="Delete" method="post" onsubmit="return confirm('Delete Project?');" class="w-100">
+                        <input type="hidden" name="id" value="@proj.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                            <i data-feather="trash-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    @if(!Model.Any())
+    {
+        <div class="col-12 text-center py-5">
+            <i data-feather="folder-plus" style="width: 64px; height: 64px;" class="text-muted opacity-25 mb-3"></i>
+            <h4>No Projects Found</h4>
+            <p class="text-muted">Start by creating your first project above.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#projectSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#projectList .col-md-4").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}
+

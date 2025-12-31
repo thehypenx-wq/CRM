@@ -1,0 +1,162 @@
+@model OfficeSuite.Models.Account
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index">Accounts</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+        <h2 class="mb-0">@Model.Name</h2>
+        <span class="text-muted small">Current Balance:</span> 
+        <span class="h4 fw-bold @(Model.Balance >= 0 ? "text-success" : "text-danger")">@Model.Balance.ToString("C")</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="DownloadStatement" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+            <i data-feather="file-text"></i> Export Excel
+        </a>
+        <button onclick="window.print()" class="btn btn-outline-secondary">
+            <i data-feather="printer"></i> Print / PDF
+        </button>
+        <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#incomeModal">
+            <i data-feather="arrow-down-left"></i> Add Income
+        </button>
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#expenseModal">
+            <i data-feather="arrow-up-right"></i> Add Expense
+        </button>
+    </div>
+</div>
+
+<div class="card card-modern shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Transaction History</h5>
+        <form method="get" class="d-flex align-items-center">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <select name="userIdFilter" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                <option value="">All Users</option>
+                @foreach(var editor in ViewBag.Editors as Dictionary<int, string>)
+                {
+                    <option value="@editor.Key" selected="@(ViewBag.FilterUser != null && (int)ViewBag.FilterUser == editor.Key)">@editor.Value</option>
+                }
+            </select>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="bg-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="ps-3">Date</th>
+                        <th>Description</th>
+                        <th class="text-end text-danger">Debit</th>
+                        <th class="text-end text-success">Credit</th>
+                        <th class="text-end">Balance (Impact)</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.Transactions != null)
+                    {
+                        var transactions = (List<OfficeSuite.Models.Transaction>)ViewBag.Transactions;
+                        foreach (var t in transactions)
+                        {
+                            var isIncome = t.Type == "Income";
+                            <tr>
+                                <td class="ps-3 text-nowrap">@t.TransactionDate.ToString("yyyy-MM-dd") <br> <small class="text-muted">@t.TransactionDate.ToString("HH:mm")</small></td>
+                                <td>
+                                    <span class="fw-bold">@t.Description</span>
+                                </td>
+                                <td class="text-end text-danger fw-bold">
+                                    @(isIncome ? "-" : t.Amount.ToString("N2"))
+                                </td>
+                                <td class="text-end text-success fw-bold">
+                                    @(isIncome ? t.Amount.ToString("N2") : "-")
+                                </td>
+                                <td class="text-end text-muted">
+                                    <small>@(isIncome ? "+" : "-") @t.Amount.ToString("N2")</small>
+                                </td>
+                                <td>
+                                    <small class="badge bg-light text-dark border">@t.CreatedByName</small>
+                                </td>
+                            </tr>
+                        }
+
+                        if (transactions.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <p>No transactions found for this account.</p>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Income Modal -->
+<div class="modal fade" id="incomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-controller="Transaction" asp-action="Create" method="post">
+            <input type="hidden" name="accountId" value="@Model.Id" />
+            <input type="hidden" name="type" value="Income" />
+            <div class="modal-content card-modern">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold text-success">Add Income</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Description</label>
+                        <input type="text" name="description" class="form-control" placeholder="e.g. Salary, Refund..." required>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="submit" class="btn btn-success w-100">Add Income</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Expense Modal -->
+<div class="modal fade" id="expenseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-controller="Transaction" asp-action="Create" method="post">
+            <input type="hidden" name="accountId" value="@Model.Id" />
+            <input type="hidden" name="type" value="Expense" />
+            <div class="modal-content card-modern">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold text-danger">Add Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Description</label>
+                        <input type="text" name="description" class="form-control" placeholder="e.g. Rent, Groceries..." required>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="submit" class="btn btn-danger w-100">Add Expense</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

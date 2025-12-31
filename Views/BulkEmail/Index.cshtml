@@ -1,0 +1,115 @@
+@using System.Data
+@model DataTable
+@{
+    ViewData["Title"] = "Bulk Email";
+}
+
+<h2>Bulk Email Marketing</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success glass">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger glass">@TempData["Error"]</div>
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">Compose Email</div>
+            <div class="card-body">
+                <form asp-action="Send" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">To (Comma separated or Group)</label>
+                        <div class="input-group">
+                            <input type="text" name="toDetails" id="toDetails" class="form-control" placeholder="client1@test.com..." value="@ViewBag.To">
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#clientModal">
+                                <i data-feather="users"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Client Selection Modal -->
+                    <div class="modal fade" id="clientModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Select Clients</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="list-group">
+                                        @foreach (var c in (List<OfficeSuite.Models.Client>)ViewBag.Clients)
+                                        {
+                                            <label class="list-group-item">
+                                                <input class="form-check-input me-1 client-check" type="checkbox" value="@c.Email" data-name="@c.Name">
+                                                @c.Name (@c.Email)
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="applySelection()" data-bs-dismiss="modal">Apply Selected</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function applySelection() {
+                            const checks = document.querySelectorAll('.client-check:checked');
+                            const emails = Array.from(checks).map(c => c.value);
+                            document.getElementById('toDetails').value = emails.join(', ');
+                        }
+                    </script>
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" required value="@ViewBag.Subject">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea name="body" class="form-control" rows="5" required></textarea>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">Attachment</label>
+                        <input type="file" name="attachment" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Send Blast</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">History</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Subject</th>
+                            <th>Att.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(DataRow row in Model.Rows)
+                        {
+                            <tr>
+                                <td>@Convert.ToDateTime(row["SentAt"]).ToShortDateString()</td>
+                                <td>@row["Subject"]</td>
+                                <td>
+                                    @if(row["AttachmentPath"] != DBNull.Value)
+                                    {
+                                        <i data-feather="paperclip"></i>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

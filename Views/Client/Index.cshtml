@@ -1,0 +1,136 @@
+@model List<OfficeSuite.Models.Client>
+
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Client Management</h2>
+        <div class="d-flex gap-2">
+            <a asp-action="ExportToExcel" class="btn btn-outline-success btn-sm glass">
+                <i data-feather="download"></i> Export to Excel
+            </a>
+            <a asp-action="Trash" class="btn btn-outline-danger btn-sm glass">
+                <i data-feather="trash-2"></i> Trash Bin
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0">
+        <h6 class="text-primary fw-bold mb-0">Add New Client</h6>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <form asp-action="Create" method="post" class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label text-muted small">Client Code</label>
+                <input type="text" name="clientCode" class="form-control" placeholder="e.g., CLI-101" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted small">Contact Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., John Doe" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-muted small">Company</label>
+                <input type="text" name="companyName" class="form-control" placeholder="e.g., Acme Corp">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label text-muted small">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="e.g., john@example.com">
+            </div>
+             <div class="col-md-3">
+                <label class="form-label text-muted small">Phone</label>
+                <input type="text" name="phone" class="form-control" placeholder="e.g., +123456789">
+            </div>
+             <div class="col-md-5">
+                <label class="form-label text-muted small">Address</label>
+                <input type="text" name="address" class="form-control" placeholder="Street, City, State">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label text-muted small">Remarks</label>
+                <input type="text" name="remark" class="form-control" placeholder="Any special notes...">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i data-feather="plus"></i> Add
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card card-modern">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <h6 class="text-dark fw-bold mb-0">Client Records</h6>
+        <div style="width: 250px;">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0"><i data-feather="search" style="width: 14px;"></i></span>
+                <input type="text" id="clientSearch" class="form-control border-start-0" placeholder="Filter clients...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body px-4 pb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="clientTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Code</th>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Contact info</th>
+                        <th>Remarks</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var client in Model)
+                    {
+                        <tr class="client-row">
+                            <td class="ps-3 fw-bold text-muted small">@client.ClientCode</td>
+                            <td class="fw-bold text-primary">@client.Name</td>
+                            <td>
+                                <div class="fw-bold">@client.CompanyName</div>
+                                <div class="text-muted small">By: @client.CreatedByUsername</div>
+                            </td>
+                            <td>
+                                <div class="small">@client.Email</div>
+                                <div class="small text-muted">@client.Phone</div>
+                            </td>
+                            <td class="small text-muted">@client.Remark</td>
+                            <td class="text-end pe-3">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm btn-outline-primary">
+                                        <i data-feather="edit-2"></i>
+                                    </a>
+                                    <form asp-action="Delete" method="post" onsubmit="return confirm('Archive this client?');" style="display:inline;">
+                                        <input type="hidden" name="id" value="@client.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i data-feather="archive"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">No clients found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#clientSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#clientTable .client-row").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,43 @@
+@model List<OfficeSuite.Models.Project>
+
+<h2>Trash Bin - Projects</h2>
+<a asp-action="Index" class="btn btn-secondary mb-3"><i data-feather="arrow-left"></i> Back to List</a>
+
+<div class="card card-modern">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Code</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var proj in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-primary">@proj.Name</td>
+                        <td class="text-muted">@proj.ProjectCode</td>
+                        <td>
+                             <form asp-action="Restore" method="post" style="display:inline;">
+                                 <input type="hidden" name="id" value="@proj.Id" />
+                                 <button type="submit" class="btn btn-success btn-sm"><i data-feather="refresh-ccw"></i> Restore</button>
+                            </form>
+                            <form asp-action="HardDelete" method="post" style="display:inline;" onsubmit="return confirm('PERMANENTLY DELETE? This cannot be undone.');">
+                                 <input type="hidden" name="id" value="@proj.Id" />
+                                 <button type="submit" class="btn btn-danger btn-sm"><i data-feather="x-circle"></i> Delete Permanently</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if(!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-muted">Trash is empty.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+@model List<OfficeSuite.Models.Reminder>
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white pt-4 px-4 border-bottom-0 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Reminder Trash</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i data-feather="arrow-left"></i> Back to Reminders</a>
+    </div>
+    <div class="card-body px-4">
+        <div class="list-group list-group-flush">
+            @foreach (var rem in Model)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom-0">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold text-muted text-decoration-line-through">@rem.ClientName</div>
+                        <span class="text-muted small">@rem.Message</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <form asp-action="Restore" method="post">
+                            <input type="hidden" name="id" value="@rem.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-success" title="Restore">
+                                <i data-feather="refresh-cw"></i>
+                            </button>
+                        </form>
+                        <form asp-action="DeletePermanently" method="post" onsubmit="return confirm('Permanently delete?');">
+                            <input type="hidden" name="id" value="@rem.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete Forever">
+                                <i data-feather="trash-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if(!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <p class="text-muted">Trash is empty.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
