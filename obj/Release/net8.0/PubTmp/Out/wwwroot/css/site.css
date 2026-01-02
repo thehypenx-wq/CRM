@@ -1,0 +1,300 @@
+:root {
+  --aws-midnight: #232F3E;
+  --aws-dark: #16191F;
+  --aws-gray-light: #F2F3F3;
+  --aws-orange: #FF9900;
+  --aws-border: #D5DBDB;
+  --aws-white: #FFFFFF;
+}
+
+body {
+  /* margin-bottom: 60px; */
+  background-color: var(--aws-gray-light);
+  color: var(--aws-dark);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+}
+
+/* Rebranded Navbar - AWS Midnight Style */
+.navbar-modern {
+  background-color: var(--aws-midnight) !important;
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1rem;
+}
+
+.navbar-modern .navbar-brand {
+  color: var(--aws-white) !important;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.navbar-modern .nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.9rem;
+}
+
+.navbar-modern .nav-link:hover {
+  color: var(--aws-white) !important;
+}
+
+/* Sidebar - Clean & High Contrast */
+#sidebar.glass {
+  background: var(--aws-white) !important;
+  border: none;
+  border-right: 1px solid var(--aws-border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+/* Attachment Styles */
+.attachment-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  transition: all 0.2s;
+}
+
+.attachment-card:hover {
+  background: #e9ecef;
+  border-color: var(--aws-orange);
+}
+
+.attachment-icon {
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aws-midnight);
+}
+
+.download-btn {
+  color: var(--aws-orange);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.download-btn:hover {
+  background: rgba(255, 153, 0, 0.1);
+}
+
+#sidebar .nav-link {
+  color: var(--aws-dark);
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+#sidebar .nav-link:hover {
+  background-color: var(--aws-gray-light);
+  color: var(--aws-orange);
+}
+
+#sidebar .nav-link.active {
+  background-color: var(--aws-gray-light);
+  color: var(--aws-orange);
+  border-left: 4px solid var(--aws-orange);
+}
+
+#sidebar .nav-link [data-feather] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Cards - High Contrast AWS Style */
+.card-modern {
+  background: var(--aws-white);
+  border: 1px solid var(--aws-border);
+  border-radius: 2px !important;
+  /* Sharp corners like AWS */
+  box-shadow: 0 1px 1px 0 rgba(0, 28, 36, 0.3), 1px 1px 1px 0 rgba(0, 28, 36, 0.15), -1px 1px 1px 0 rgba(0, 28, 36, 0.15);
+  transition: none;
+}
+
+.card-modern:hover {
+  transform: none;
+  box-shadow: 0 1px 1px 0 rgba(0, 28, 36, 0.3), 1px 1px 1px 0 rgba(0, 28, 36, 0.15), -1px 1px 1px 0 rgba(0, 28, 36, 0.15);
+}
+
+.card-header-modern {
+  background: var(--aws-gray-light);
+  border-bottom: 1px solid var(--aws-border);
+  padding: 1rem;
+  color: var(--aws-dark);
+}
+
+/* Buttons - AWS Orange & Dark */
+.btn-primary {
+  background-color: var(--aws-orange) !important;
+  border-color: #ec7211 !important;
+  color: #fff !important;
+  font-weight: 700;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.btn-primary:hover {
+  background-color: #eb5f07 !important;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-outline-primary {
+  color: var(--aws-orange);
+  border-color: var(--aws-orange);
+  border-radius: 2px;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--aws-orange);
+  color: #fff;
+}
+
+/* AWS Dashboard Elements */
+.bg-gradient-primary,
+.bg-gradient-success,
+.bg-gradient-info,
+.bg-gradient-warning,
+.bg-gradient-danger {
+  background: var(--aws-midnight) !important;
+}
+
+.hover-lift:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Auth Pages - AWS Portal Style */
+.auth-page-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-glass-card {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  color: var(--aws-dark) !important;
+  backdrop-filter: blur(10px) !important;
+  padding: 2.5rem !important;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.auth-brand {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--aws-midnight) !important;
+  margin-bottom: 0.5rem;
+  letter-spacing: -1px;
+}
+
+.glass-input-auth {
+  background: var(--aws-white) !important;
+  border: 1px solid var(--aws-border) !important;
+  color: var(--aws-dark) !important;
+  border-radius: 2px !important;
+}
+
+.glass-input-auth:focus {
+  border-color: var(--aws-orange) !important;
+  box-shadow: 0 0 0 1px var(--aws-orange) !important;
+}
+
+.auth-btn {
+  background: var(--aws-orange);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.auth-link {
+  color: #0073bb;
+}
+
+/* Profile Card in Sidebar */
+.sidebar-profile {
+  background-color: #1a222b;
+  color: #fff;
+  border-radius: 16px;
+  margin: 15px;
+  padding: 18px 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex !important;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 55px;
+  height: 55px;
+  min-width: 55px;
+  flex-shrink: 0;
+  border-radius: 50% !important;
+  object-fit: cover;
+  background: var(--aws-orange);
+  color: #fff;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-right: 15px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.profile-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 !important;
+  line-height: 1.2;
+}
+
+.profile-role {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9) !important;
+  margin: 2px 0 4px 0 !important;
+}
+
+.profile-edit-link {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4) !important;
+  text-decoration: none !important;
+  transition: color 0.1s;
+  line-height: 1;
+}
+
+.profile-edit-link:hover {
+  color: #fff !important;
+}
