@@ -10,6 +10,8 @@ builder.Services.AddScoped<OfficeSuite.Services.FileHelper>(provider =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<OfficeSuite.Services.PermissionService>();
 builder.Services.AddScoped<OfficeSuite.Services.NotificationService>();
+builder.Services.AddSingleton<OfficeSuite.Services.EmailService>();
+builder.Services.AddHostedService<OfficeSuite.Services.ReminderEmailWorker>();
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
