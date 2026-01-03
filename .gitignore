@@ -53,3 +53,4 @@ wwwroot/uploads/*
 /bin/Debug/net8.0/OfficeSuite.pdb
 /bin/Debug/net8.0/OfficeSuite.staticwebassets.endpoints.json
 /bin/Debug/net8.0/OfficeSuite.staticwebassets.runtime.json
+/Properties/PublishProfiles
