@@ -36,11 +36,22 @@
     <div class="col-md-9 d-flex flex-column bg-white bg-opacity-10 glass rounded-end-3" style="height: calc(100vh - 120px); min-height: 600px;">
         <!-- Chat Header -->
         <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white bg-opacity-25">
-            <div>
-                <h6 class="mb-0 fw-bold" id="currentRoomName"># General</h6>
-                <small class="text-success" style="font-size: 0.7rem;">
-                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" style="width: 8px; height: 8px;"></span> Live Polling
-                </small>
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <h6 class="mb-0 fw-bold" id="currentRoomName"># General</h6>
+                    <small class="text-success" style="font-size: 0.7rem;">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" style="width: 8px; height: 8px;"></span> Live Polling
+                    </small>
+                </div>
+                <!-- Search Box -->
+                <div class="input-group input-group-sm me-2" style="max-width: 250px;">
+                    <span class="input-group-text bg-transparent border-end-0"><i data-feather="search" style="width:14px;"></i></span>
+                    <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search messages..." onkeyup="handleSearch(this.value)">
+                </div>
+                <!-- Star Filter Toggle -->
+                <button id="starFilterBtn" class="btn btn-sm btn-light border text-muted" onclick="toggleStarredView()" title="Show Starred Messages">
+                    <i data-feather="star" style="width:14px; height:14px;"></i>
+                </button>
             </div>
             <div class="d-flex align-items-center">
                 <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">
@@ -59,13 +70,13 @@
 
         <!-- Chat Footer: Input -->
         <div class="p-3 bg-white bg-opacity-25 border-top">
-            <div class="input-group">
+            <div class="d-flex gap-2">
                 <button class="btn btn-light border" onclick="document.getElementById('fileInput').click()" title="Upload Image">
                     <i data-feather="image"></i>
                 </button>
                 <input type="file" id="fileInput" class="d-none" onchange="uploadFile()">
-                <input type="text" id="messageInput" class="form-control" placeholder="Type a message to #General..." style="border-radius: 0;">
-                <button id="sendButton" class="btn btn-primary px-4">
+                <textarea id="messageInput" class="form-control" placeholder="Type a message to #General..." rows="2" style="resize: none; border-radius: 10px;"></textarea>
+                <button id="sendButton" class="btn btn-primary px-4 rounded-3">
                     <i data-feather="send"></i>
                 </button>
             </div>
@@ -115,6 +126,21 @@
     .chat-img:hover {
         transform: scale(1.02);
     }
+    .star-btn {
+        transition: all 0.2s;
+        visibility: visible;
+    }
+    /* Always show at low opacity so the user knows where they are */
+    .star-btn.text-muted {
+        opacity: 0.5;
+    }
+    .msg-row:hover .star-btn.text-muted {
+        opacity: 0.8;
+    }
+    .star-btn:hover {
+        opacity: 1 !important;
+        transform: scale(1.2);
+    }
 </style>
 
 <script>
@@ -123,16 +149,70 @@
     var chatArea = document.getElementById("chatArea");
     var isScrolledToBottom = true;
     var lastMessageCount = 0;
+    var currentSearch = "";
+    var showOnlyStarred = false;
+
+    function handleSearch(val) {
+        currentSearch = val;
+        document.getElementById("messagesList").innerHTML = '';
+        lastMessageCount = 0;
+        fetchMessages();
+    }
+
+    function toggleStarredView() {
+        showOnlyStarred = !showOnlyStarred;
+        var btn = document.getElementById("starFilterBtn");
+        if(showOnlyStarred) {
+            btn.classList.add("text-warning");
+            btn.classList.remove("text-muted");
+        } else {
+            btn.classList.remove("text-warning");
+            btn.classList.add("text-muted");
+        }
+        document.getElementById("messagesList").innerHTML = '';
+        lastMessageCount = 0;
+        fetchMessages();
+    }
+
+    function toggleStar(msgId, element) {
+        var formData = new FormData();
+        formData.append("id", msgId);
+        fetch('/Chat/ToggleStar', { method: 'POST', body: formData })
+        .then(() => {
+            var icon = element.querySelector('svg');
+            if(element.classList.contains('text-warning')) {
+                element.classList.remove('text-warning');
+                element.classList.add('text-muted');
+                if(icon) {
+                    icon.style.fill = 'none';
+                    icon.classList.remove('text-warning');
+                }
+            } else {
+                element.classList.remove('text-muted');
+                element.classList.add('text-warning');
+                if(icon) {
+                    icon.style.fill = 'currentColor';
+                }
+            }
+        });
+    }
 
     function fetchMessages() {
         var group = document.getElementById("currentGroup").value;
-        fetch('/Chat/GetMessages?groupName=' + group)
+        var url = '/Chat/GetMessages?groupName=' + group;
+        if(currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+
+        fetch(url)
             .then(response => response.json())
             .then(data => {
                 var list = document.getElementById("messagesList");
                 
-                // If group changed or message count decreased (unlikely but safe), clear and reset
-                if (data.length < lastMessageCount) {
+                // Client-side filtering for Starred if active
+                if(showOnlyStarred) {
+                    data = data.filter(m => m.isStarred);
+                }
+
+                if (data.length < lastMessageCount || currentSearch || showOnlyStarred) {
                     list.innerHTML = '';
                     lastMessageCount = 0;
                 }
@@ -141,49 +221,55 @@
                     var newMessages = data.slice(lastMessageCount);
                     newMessages.forEach(msg => {
                         var isMe = msg.user === currentUser;
-                        var div = document.createElement("div");
-                        div.className = "d-flex flex-column " + (isMe ? "align-items-end" : "align-items-start");
+                        var rowDiv = document.createElement("div");
+                        rowDiv.className = "d-flex mb-3 msg-row " + (isMe ? "justify-content-end" : "justify-content-start");
                         
+                        var msgWrapper = document.createElement("div");
+                        msgWrapper.className = "position-relative d-flex align-items-start " + (isMe ? "flex-row-reverse" : "flex-row");
+                        msgWrapper.style.maxWidth = "75%";
+
                         var bubble = document.createElement("div");
                         bubble.className = "message-bubble " + (isMe ? "message-me" : "message-others");
                         
+                        var contentHtml = "";
                         if(!isMe) {
-                            bubble.innerHTML += `<div class="fw-bold mb-1" style="font-size: 0.75rem">${msg.user}</div>`;
+                            contentHtml += `<div class="fw-bold mb-1" style="font-size: 0.75rem; color: #4e73df;">${msg.user}</div>`;
                         }
 
                         if(msg.message.startsWith("/uploads/")) {
                             var isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.message);
                             if (isImage) {
-                                bubble.innerHTML += `
+                                contentHtml += `
                                     <div class="position-relative">
                                         <a href="${msg.message}" target="_blank"><img src="${msg.message}" class="chat-img" /></a>
-                                        <a href="${msg.message}" target="_blank" class="btn btn-sm btn-light position-absolute bottom-0 start-0 m-2 opacity-75" title="View">
-                                            <i data-feather="eye" style="width:14px; height:14px;"></i>
-                                        </a>
-                                        <a href="${msg.message}" download class="btn btn-sm btn-dark position-absolute bottom-0 end-0 m-2 opacity-75" title="Download">
-                                            <i data-feather="download" style="width:14px; height:14px;"></i>
-                                        </a>
-                                    </div>`;
+                                   </div>`;
                             } else {
                                 var filename = msg.message.split('/').pop().substring(36);
-                                bubble.innerHTML += `
+                                contentHtml += `
                                     <div class="attachment-card text-dark p-2 bg-light border rounded d-flex align-items-center mt-2" style="min-width: 200px;">
                                         <div class="me-2 text-primary"><i data-feather="file" style="width:20px; height:20px;"></i></div>
-                                        <div class="flex-grow-1 text-truncate me-2" style="max-width: 180px;">
-                                            <div class="small fw-bold text-truncate" title="${filename}">${filename || 'Attachment'}</div>
-                                        </div>
-                                        <a href="${msg.message}" download="${filename}" class="btn btn-sm btn-primary" title="Download">
-                                            <i data-feather="download" style="width:14px; height:14px;"></i>
-                                        </a>
+                                        <div class="small fw-bold text-truncate">${filename || 'Attachment'}</div>
                                     </div>`;
                             }
                         } else {
-                            bubble.innerHTML += `<div>${msg.message}</div>`;
+                            contentHtml += `<div>${msg.message.replace(/\n/g, '<br>')}</div>`;
                         }
                         
-                        bubble.innerHTML += `<div class="message-info text-end">${msg.timestamp}</div>`;
-                        div.appendChild(bubble);
-                        list.appendChild(div);
+                        contentHtml += `<div class="message-info text-end">${msg.timestamp}</div>`;
+                        bubble.innerHTML = contentHtml;
+
+                        // Star Button
+                        var starClass = msg.isStarred ? "text-warning" : "text-muted";
+                        var starBtn = document.createElement("button");
+                        starBtn.onclick = function() { toggleStar(msg.id, this); };
+                        starBtn.className = "btn btn-link p-0 mx-2 mt-2 star-btn " + starClass;
+                        starBtn.style.textDecoration = "none";
+                        starBtn.innerHTML = `<i data-feather="star" style="width:14px; height:14px; fill: ${msg.isStarred ? 'currentColor' : 'none'}"></i>`;
+
+                        msgWrapper.appendChild(bubble);
+                        msgWrapper.appendChild(starBtn);
+                        rowDiv.appendChild(msgWrapper);
+                        list.appendChild(rowDiv);
                     });
 
                     lastMessageCount = data.length;
@@ -197,7 +283,9 @@
     }
 
     fetchMessages();
-    setInterval(fetchMessages, 2000);
+    setInterval(() => {
+        if(!currentSearch && !showOnlyStarred) fetchMessages();
+    }, 2000);
 
     chatArea.addEventListener('scroll', function(){
         if(chatArea.scrollTop + chatArea.clientHeight >= chatArea.scrollHeight - 50) {
@@ -208,8 +296,11 @@
     });
 
     document.getElementById("sendButton").addEventListener("click", sendMessage);
-    document.getElementById("messageInput").addEventListener("keypress", function(e) {
-        if(e.key === 'Enter') sendMessage();
+    document.getElementById("messageInput").addEventListener("keydown", function(e) {
+        if(e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
 
     function sendMessage() {
@@ -217,7 +308,7 @@
         var message = input.value;
         var group = document.getElementById("currentGroup").value;
         
-        if (message) {
+        if (message.trim()) {
              var formData = new FormData();
              formData.append("message", message);
              formData.append("groupName", group);
@@ -225,6 +316,8 @@
              fetch('/Chat/SendMessage', { method: 'POST', body: formData })
              .then(() => {
                  input.value = '';
+                 // If searching, clear search to see new message?
+                 // For now just fetch
                  fetchMessages();
              });
         }
@@ -244,7 +337,7 @@
             // Reset message list for new group
             document.getElementById("messagesList").innerHTML = '';
             lastMessageCount = 0;
-            isScrolledToBottom = true; // Ensure it scrolls to bottom after first fetch of new group
+            isScrolledToBottom = true;
             
             fetchMessages();
         })

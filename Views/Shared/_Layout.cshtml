@@ -20,8 +20,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OfficeSuite.styles.css" asp-append-version="true" />
+    <style>
+        @@media (max-width: 767.98px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                z-index: 1050;
+                width: 250px;
+                margin-top: 0 !important;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                display: block !important;
+            }
+            #sidebar.show {
+                transform: translateX(0);
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.5);
+                z-index: 1040;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     @if (User.Identity?.IsAuthenticated == true)
     {
@@ -29,17 +62,14 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light navbar-modern mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HypeNXCRM</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar, .navbar-collapse" aria-controls="sidebar navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1 d-none d-sm-flex">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
                         </li>
                     </ul>
                     <form asp-controller="Search" asp-action="Index" method="get" class="d-flex mx-auto" style="width: 40%;">
@@ -321,6 +351,18 @@
                 });
                 </text>
             }
+
+            // Mobile Sidebar Toggle Logic
+            $('.navbar-toggler').on('click', function() {
+                if ($(window).width() < 768) {
+                    $('#sidebarOverlay').toggleClass('show');
+                }
+            });
+
+            $('#sidebarOverlay').on('click', function() {
+                $('#sidebar').removeClass('show');
+                $(this).removeClass('show');
+            });
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

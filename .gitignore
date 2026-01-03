@@ -25,5 +25,4 @@ desktop.ini
 !/RetailSoftware.DbSetup/
 !/RetailSoftware.sln
 !/.gitignore
-/bin/Debug/net8.0/OfficeSuite.dll
-/bin/Debug/net8.0/OfficeSuite.exe
+
