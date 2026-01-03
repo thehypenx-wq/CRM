@@ -87,59 +87,121 @@
 
 <style>
     .message-bubble {
-        max-width: 70%;
-        padding: 10px 15px;
-        border-radius: 18px;
+        max-width: 85%; /* Increased width for better mobile view */
+        padding: 12px 16px;
+        border-radius: 16px;
         position: relative;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         word-wrap: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        display: flex;
+        flex-direction: column; /* Stack content and time */
+        min-width: 120px; /* Ensure space for short messages + time */
     }
     .message-me {
         align-self: flex-end;
-        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        background: var(--aws-orange); 
         color: white;
         border-bottom-right-radius: 4px;
     }
+    /* Ensure links in user messages are readable */
+    .message-me a { color: white; text-decoration: underline; }
+
     .message-others {
         align-self: flex-start;
         background: white;
-        color: #333;
+        color: var(--aws-dark);
         border-bottom-left-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.08);
     }
     .message-info {
         font-size: 0.7rem;
-        margin-top: 4px;
         opacity: 0.7;
+        font-weight: 500;
+        align-self: flex-end; /* Align time to the right */
+        margin-top: 4px;
+        line-height: 1;
     }
     .group-link.active {
-        background-color: rgba(78, 115, 223, 0.1) !important;
-        color: #4e73df !important;
+        background-color: rgba(255, 153, 0, 0.1) !important;
+        color: var(--aws-orange) !important;
         font-weight: bold;
+        border-left: 3px solid var(--aws-orange);
     }
     .chat-img {
-        max-width: 250px;
-        border-radius: 10px;
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
         cursor: pointer;
         transition: transform 0.2s;
+        border: 1px solid rgba(255,255,255,0.2);
     }
     .chat-img:hover {
-        transform: scale(1.02);
+        transform: scale(1.01);
     }
+    
+    /* New Attachment Card Styles */
+    .attachment-card {
+        background: #fff;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-width: 220px;
+        max-width: 300px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* Override for 'me' messages to ensure card looks good inside orange bubble */
+    .message-me .attachment-card {
+        background: rgba(255,255,255,0.95);
+        color: #333; /* Always dark text inside card */
+    }
+
+    .attachment-icon-wrapper {
+        width: 36px;
+        height: 36px;
+        background: #f1f3f5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .attachment-info {
+        flex-grow: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        line-height: 1.2;
+    }
+    
+    .attachment-name {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #333;
+    }
+    
+    .attachment-size {
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+
     .star-btn {
         transition: all 0.2s;
         visibility: visible;
+        opacity: 0.3;
     }
-    /* Always show at low opacity so the user knows where they are */
-    .star-btn.text-muted {
-        opacity: 0.5;
-    }
-    .msg-row:hover .star-btn.text-muted {
-        opacity: 0.8;
+    .msg-row:hover .star-btn {
+        opacity: 1;
     }
     .star-btn:hover {
-        opacity: 1 !important;
-        transform: scale(1.2);
+        transform: scale(1.1);
     }
 </style>
 
@@ -238,17 +300,41 @@
 
                         if(msg.message.startsWith("/uploads/")) {
                             var isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.message);
+                            var filename = msg.message.split('/').pop();
+                            // Clean up filename UUID prefix if standard UUID (36 chars) + underscore
+                            if(filename.length > 37 && filename[36] === '_') {
+                                filename = filename.substring(37);
+                            } else if (filename.length > 36) {
+                                // Fallback for simple UUIDs without underscore separator if that was the case
+                                // But commonly it's uuid_filename or just uuid-filename. 
+                                // Let's just try to keep it readable. If it looks like a guid, user might accept it.
+                                // The original code did substring(36) which implies 36 char UUID prefix.
+                                if(filename.length > 36) filename = filename.substring(36);
+                            }
+
                             if (isImage) {
                                 contentHtml += `
-                                    <div class="position-relative">
-                                        <a href="${msg.message}" target="_blank"><img src="${msg.message}" class="chat-img" /></a>
+                                    <div class="position-relative mt-2 group-chat-image-container">
+                                        <a href="${msg.message}" target="_blank">
+                                            <img src="${msg.message}" class="chat-img rounded mb-1" />
+                                        </a>
+                                        <a href="${msg.message}" download="${filename}" class="btn btn-sm btn-light position-absolute bottom-0 end-0 m-2 shadow-sm" title="Download" style="opacity: 0.9;">
+                                            <i data-feather="download" style="width: 14px; height: 14px;"></i>
+                                        </a>
                                    </div>`;
                             } else {
-                                var filename = msg.message.split('/').pop().substring(36);
                                 contentHtml += `
-                                    <div class="attachment-card text-dark p-2 bg-light border rounded d-flex align-items-center mt-2" style="min-width: 200px;">
-                                        <div class="me-2 text-primary"><i data-feather="file" style="width:20px; height:20px;"></i></div>
-                                        <div class="small fw-bold text-truncate">${filename || 'Attachment'}</div>
+                                    <div class="attachment-card mt-2">
+                                        <div class="attachment-icon-wrapper">
+                                            <i data-feather="file-text" class="text-primary"></i>
+                                        </div>
+                                        <div class="attachment-info">
+                                            <div class="attachment-name text-truncate" title="${filename}">${filename}</div>
+                                            <div class="attachment-size text-muted">File</div> 
+                                        </div>
+                                        <a href="${msg.message}" download="${filename}" class="btn btn-sm btn-light border ms-2" title="Download">
+                                            <i data-feather="download" style="width: 14px; height: 14px; color: var(--aws-orange);"></i>
+                                        </a>
                                     </div>`;
                             }
                         } else {

@@ -22,7 +22,7 @@ namespace OfficeSuite.Services
         {
             if (file == null || file.Length == 0) return null;
 
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
             var filePath = Path.Combine(_uploadDir, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
