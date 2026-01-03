@@ -1,0 +1,29 @@
+﻿# .NET Core gitignore
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.swp
+*.bak
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Global ignore
+/*
+
+# Whitelist necessary files/folders
+!/RetailSoftware.Web/
+!/RetailSoftware.BAL/
+!/RetailSoftware.DAL/
+!/RetailSoftware.Models/
+!/RetailSoftware.DbSetup/
+!/RetailSoftware.sln
+!/.gitignore
+/bin/Debug/net8.0/OfficeSuite.dll
+/bin/Debug/net8.0/OfficeSuite.exe
