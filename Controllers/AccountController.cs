@@ -344,7 +344,13 @@ namespace OfficeSuite.Controllers
                     var identity = new ClaimsIdentity(claims, "CookieAuth");
                     var principal = new ClaimsPrincipal(identity);
 
-                    await HttpContext.SignInAsync("CookieAuth", principal);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+                    };
+
+                    await HttpContext.SignInAsync("CookieAuth", principal, authProperties);
                     
                     var userRole = row["Role"]?.ToString() ?? "User";
                     if (userRole == "Admin")

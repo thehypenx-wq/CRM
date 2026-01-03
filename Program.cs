@@ -18,6 +18,8 @@ builder.Services.AddAuthentication("CookieAuth")
         options.Cookie.Name = "OfficeSuite.Auth";
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(24);
+        options.SlidingExpiration = true;
     });
 
 var app = builder.Build();

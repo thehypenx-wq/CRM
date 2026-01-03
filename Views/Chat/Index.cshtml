@@ -49,8 +49,8 @@
                     <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search messages..." onkeyup="handleSearch(this.value)">
                 </div>
                 <!-- Star Filter Toggle -->
-                <button id="starFilterBtn" class="btn btn-sm btn-light border text-muted px-3" onclick="toggleStarredView()" title="Show Starred Messages">
-                    <i data-feather="star" style="width:16px; height:16px;"></i> <span class="ms-1 fw-bold text-danger">STAR FAVORITE</span>
+                <button id="starFilterBtn" class="btn btn-sm btn-light border text-muted" onclick="toggleStarredView()" title="Show Starred Messages">
+                    <i data-feather="star" style="width:14px; height:14px;"></i>
                 </button>
             </div>
             <div class="d-flex align-items-center">
@@ -63,10 +63,6 @@
 
         <!-- Messages Container -->
         <div class="flex-grow-1 p-4" id="chatArea" style="overflow-y: auto; background-color: rgba(0,0,0,0.02);">
-            <div id="liveIndicator" style="background: #ff0000; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 1.2rem; border: 4px solid yellow;">
-                 ⚠️ NEW VERSION LOADED AT 10:45 AM ⚠️<br>
-                 IF YOU SEE THIS, STARS ARE WORKING!
-            </div>
             <div id="messagesList" class="d-flex flex-column gap-3">
                 <!-- Messages will be injected here -->
             </div>
@@ -262,12 +258,13 @@
                         contentHtml += `<div class="message-info text-end">${msg.timestamp}</div>`;
                         bubble.innerHTML = contentHtml;
 
-                        // Star Button - Using plain text for guaranteed visibility
+                        // Star Button
+                        var starClass = msg.isStarred ? "text-warning" : "text-muted";
                         var starBtn = document.createElement("button");
                         starBtn.onclick = function() { toggleStar(msg.id, this); };
-                        starBtn.className = "btn p-1 mx-2 mt-2 star-btn " + (msg.isStarred ? "btn-warning" : "btn-outline-danger");
-                        starBtn.style.fontSize = "1.2rem";
-                        starBtn.innerHTML = msg.isStarred ? "★" : "☆"; // Solid vs Outline
+                        starBtn.className = "btn btn-link p-0 mx-2 mt-2 star-btn " + starClass;
+                        starBtn.style.textDecoration = "none";
+                        starBtn.innerHTML = `<i data-feather="star" style="width:14px; height:14px; fill: ${msg.isStarred ? 'currentColor' : 'none'}"></i>`;
 
                         msgWrapper.appendChild(bubble);
                         msgWrapper.appendChild(starBtn);
