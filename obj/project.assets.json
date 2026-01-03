@@ -1604,11 +1604,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hypenx\\Desktop\\PARTH\\OfficeSuite (2)\\OfficeSuite\\OfficeSuite.csproj",
+      "projectUniqueName": "D:\\Github\\TheHypeNC-CRM\\OfficeSuite.csproj",
       "projectName": "OfficeSuite",
-      "projectPath": "C:\\Users\\hypenx\\Desktop\\PARTH\\OfficeSuite (2)\\OfficeSuite\\OfficeSuite.csproj",
+      "projectPath": "D:\\Github\\TheHypeNC-CRM\\OfficeSuite.csproj",
       "packagesPath": "C:\\Users\\hypenx\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hypenx\\Desktop\\PARTH\\OfficeSuite (2)\\OfficeSuite\\obj\\",
+      "outputPath": "D:\\Github\\TheHypeNC-CRM\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
