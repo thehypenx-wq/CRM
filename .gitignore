@@ -70,3 +70,4 @@ wwwroot/uploads/*
 /obj/Debug/net8.0/OfficeSuite.pdb
 /obj/Debug/net8.0/refint/OfficeSuite.dll
 /obj/Debug/net8.0/ref/OfficeSuite.dll
+/obj/Debug/net8.0/OfficeSuite.RazorAssemblyInfo.cs
