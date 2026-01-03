@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OfficeSuite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53a2ec44adf3992c6d1f0e5edd8101bf9e3f71e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("OfficeSuite")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OfficeSuite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -62,23 +62,42 @@ namespace OfficeSuite.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMessages(string groupName)
+        public IActionResult GetMessages(string groupName, string search = null)
         {
             if(string.IsNullOrEmpty(groupName)) groupName = "General";
             
-            string query = "SELECT * FROM ChatMessages WHERE GroupName = @GroupName ORDER BY Timestamp";
-            var dt = _db.ExecuteQuery(query, new SqlParameter[] { new SqlParameter("@GroupName", groupName) });
+            string query = "SELECT * FROM ChatMessages WHERE GroupName = @GroupName";
+            var parameters = new List<SqlParameter> { new SqlParameter("@GroupName", groupName) };
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query += " AND Message LIKE @Search";
+                parameters.Add(new SqlParameter("@Search", "%" + search + "%"));
+            }
+
+            query += " ORDER BY Timestamp";
+            var dt = _db.ExecuteQuery(query, parameters.ToArray());
             
             var messages = new List<object>();
             foreach(DataRow row in dt.Rows)
             {
                 messages.Add(new {
+                    id = (int)row["Id"],
                     user = row["UserName"]?.ToString() ?? "Unknown",
                     message = row["Message"]?.ToString() ?? "",
-                    timestamp = (row["Timestamp"] != DBNull.Value ? (DateTime)row["Timestamp"] : DateTime.Now).ToString("t")
+                    timestamp = (row["Timestamp"] != DBNull.Value ? (DateTime)row["Timestamp"] : DateTime.Now).ToString("t"),
+                    isStarred = (bool)(row["IsStarred"] ?? false)
                 });
             }
             return Json(messages);
+        }
+
+        [HttpPost]
+        public IActionResult ToggleStar(int id)
+        {
+            string query = "UPDATE ChatMessages SET IsStarred = ~IsStarred WHERE Id = @Id";
+            _db.ExecuteNonQuery(query, new SqlParameter[] { new SqlParameter("@Id", id) });
+            return Ok();
         }
 
         [HttpPost]

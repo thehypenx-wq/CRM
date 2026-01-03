@@ -1,93 +1,12 @@
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\appsettings.Development.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\appsettings.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.staticwebassets.runtime.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.staticwebassets.endpoints.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.exe
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.deps.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.runtimeconfig.json
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\OfficeSuite.pdb
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Azure.Core.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Azure.Identity.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Bcl.Cryptography.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Identity.Client.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.ClientModel.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.Diagnostics.EventLog.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.Memory.Data.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\cs\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\de\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\es\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\fr\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\it\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\ja\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\ko\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\pl\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\pt-BR\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\ru\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\tr\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\zh-Hans\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\zh-Hant\Microsoft.Data.SqlClient.resources.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\unix\lib\net8.0\Microsoft.Data.SqlClient.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
-D:\TODOSoft\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.csproj.AssemblyReference.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\rpswa.dswa.cache.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.GeneratedMSBuildEditorConfig.editorconfig
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.AssemblyInfoInputs.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.AssemblyInfo.cs
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.csproj.CoreCompileInputs.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.MvcApplicationPartsAssemblyInfo.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.RazorAssemblyInfo.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.RazorAssemblyInfo.cs
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\rjimswa.dswa.cache.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\scopedcss\bundle\OfficeSuite.styles.css
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\scopedcss\projectbundle\OfficeSuite.bundle.scp.css
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\staticwebassets.build.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\staticwebassets.build.json.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\staticwebassets.development.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\swae.build.ex.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSu.C0E85377.Up2Date
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.dll
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\refint\OfficeSuite.dll
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.pdb
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\OfficeSuite.genruntimeconfig.cache
-D:\TODOSoft\OfficeSuite\obj\Debug\net8.0\ref\OfficeSuite.dll
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.exe
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.dll
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\appsettings.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.staticwebassets.runtime.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.staticwebassets.endpoints.json
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.exe
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.deps.json
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.runtimeconfig.json
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.dll
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.pdb
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
@@ -105,7 +24,9 @@ C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Micro
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.ClientModel.dll
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.Diagnostics.EventLog.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\System.Memory.Data.dll
@@ -125,7 +46,9 @@ C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\tr\Mi
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\zh-Hans\Microsoft.Data.SqlClient.resources.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\zh-Hant\Microsoft.Data.SqlClient.resources.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\unix\lib\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Data.SqlClient.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
@@ -138,6 +61,7 @@ C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\Offic
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.RazorAssemblyInfo.cache
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.RazorAssemblyInfo.cs
+C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.sourcelink.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\rjimswa.dswa.cache.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
@@ -153,8 +77,5 @@ C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\Offic
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\refint\OfficeSuite.dll
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.pdb
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.deps.json
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.runtimeconfig.json
-C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\bin\Debug\net8.0\OfficeSuite.pdb
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\OfficeSuite.genruntimeconfig.cache
 C:\Users\hypenx\Desktop\PARTH\OfficeSuite (2)\OfficeSuite\obj\Debug\net8.0\ref\OfficeSuite.dll
